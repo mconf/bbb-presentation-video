@@ -82,6 +82,8 @@ class SizedShapeProto(BaseShapeProto, Protocol):
 
     size: Size = Size(0, 0)
     """Precalculated bounding box of the shape."""
+    grow_y: float = 0
+    """The growY prop, which is included in the size height."""
 
     def update_from_data(self, data: ShapeData) -> None:
         super().update_from_data(data)
@@ -93,9 +95,9 @@ class SizedShapeProto(BaseShapeProto, Protocol):
             props = data["props"]
 
             w = props["w"] if "w" in props else self.size.width
-            h = props["h"] if "h" in props else self.size.height
-            grow_y = props["growY"] if "growY" in props else 0.0
-            self.size = Size(w, h + grow_y)
+            h = props["h"] if "h" in props else self.size.height - self.grow_y
+            self.grow_y = props["growY"] if "growY" in props else 0.0
+            self.size = Size(w, h + self.grow_y)
 
 
 @attr.s(order=False, slots=True, auto_attribs=True)

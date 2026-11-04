@@ -322,6 +322,18 @@ def test_sticky_v2_from_data_grown() -> None:
     assert sticky.verticalAlign == AlignStyle.START
 
 
+def test_sticky_v2_update_grown() -> None:
+    # Regression: every update carries the full props, so growY must not be
+    # added again on top of the previous size.
+    sticky = StickyShapeV2.from_data(_note_data(grow_y=120))
+    sticky.update_from_data(_note_data(grow_y=120))
+    assert sticky.size == Size(200, 320)
+    sticky.update_from_data(_note_data(grow_y=60))
+    assert sticky.size == Size(200, 260)
+    sticky.update_from_data(_note_data(grow_y=0))
+    assert sticky.size == Size(200, 200)
+
+
 def test_text_v2_from_data() -> None:
     # Regression: tldraw 2 text shapes have a w prop but no h prop, and w is
     # needed for wrapping when autoSize is off.
